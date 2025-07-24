@@ -1,6 +1,8 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ricochet_app/data/repositories/game_repository.dart';
+import 'package:ricochet_app/ui/game/view_model/game_viewmodel.dart';
+import 'package:ricochet_app/ui/game/widgets/game_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,10 +16,10 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'ZouBoom',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 185, 34, 255)),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 196, 132, 255)),
         ),
         home: MyHomePage(),
       ),
@@ -26,55 +28,50 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
 
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    return Scaffold(
-      body: Column(
-        children: [
-          Text('A random AWESOME idea:'),
-          BigCard(pair: pair),
-
-          ElevatedButton(
-            onPressed: () {
-              appState.getNext();
-            },
-            child: Text("Next"),
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = GameScreen(
+          viewModel: GameViewModel(
+            gameRepository: GameRepository(
+              width: 30, height: 30, nbRobot: 5
+            )
           ),
-        ],
-      ),
-    );
-  }
-}
+        );
+        break;
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
+      default:
+        throw UnimplementedError("No widget for $selectedIndex");
+    }
 
-  final WordPair pair;
-  
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Text(pair.asLowerCase),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          body: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: page,
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     );
   }
 }
