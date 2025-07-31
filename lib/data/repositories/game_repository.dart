@@ -1,16 +1,16 @@
 /*
  *  Contact : Elowan - elowarp@gmail.com
  *  Creation : 24-07-2025 22:04:46
- *  Last modified : 31-07-2025 18:21:34
+ *  Last modified : 31-07-2025 21:03:49
  *  File : game_repository.dart
  */
 
 import 'dart:math';
 
 class Robot {
-  final int id;
-  final int x;
-  final int y;
+  var id = -1;
+  var x = -1;
+  var y = -1;
 
   Robot({
     required this.id,
@@ -46,7 +46,7 @@ class GameRepository {
       if (proba < 87) {return 0;} // 87% de chance d'avoir une case vide
       else if (proba < 92) {return 1;} // 5% d'un mur à droite
       else if (proba < 97) {return 2;} // 5% d'un mur à bas
-      else if (proba < 99) {return 3;} // 2% d'un mur en bas gauche
+      else if (proba <= 99) {return 3;} // 2% d'un mur en bas gauche
       else {return 4;} // 1% d'une case impossible
     }
 
