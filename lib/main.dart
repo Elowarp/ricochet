@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GameScreen(
           viewModel: GameViewModel(
             gameRepository: GameRepository(
-              width: 30, height: 30, nbRobot: 5
+              width: 20, height: 20, nbRobots: 5
             )
           ),
         );
