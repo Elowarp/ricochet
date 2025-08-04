@@ -1,7 +1,7 @@
 /*
  *  Contact : Elowan - elowarp@gmail.com
  *  Creation : 24-07-2025 22:03:32
- *  Last modified : 31-07-2025 21:59:53
+ *  Last modified : 01-08-2025 12:32:52
  *  File : GamePage.dart
  */
 
@@ -24,7 +24,7 @@ class GameViewModel extends ChangeNotifier {
     _gameRepository = gameRepository;
 
 
-  List<List> _grid = [];
+  List<List<Case>> _grid = [];
   List<Robot> _robots = [];
   
   /// Renvoie les tailles du plateau
@@ -36,9 +36,9 @@ class GameViewModel extends ChangeNotifier {
   int get selectedRobot => _selectedRobot;
 
   /// Renvoie la matrice de jeu non modifable 
-  UnmodifiableListView<UnmodifiableListView> get grid => 
+  UnmodifiableListView<UnmodifiableListView<Case>> get grid => 
     UnmodifiableListView(
-      List<UnmodifiableListView>.generate(_grid.length, (int i) => UnmodifiableListView(_grid[i]))
+      List<UnmodifiableListView<Case>>.generate(_grid.length, (int i) => UnmodifiableListView(_grid[i]))
     );
 
   /// Renvoie la liste de robots non modifable 
@@ -46,8 +46,8 @@ class GameViewModel extends ChangeNotifier {
     UnmodifiableListView(_robots);
 
   /// Renvoie le type de la case
-  int getCase({int x=-1, int y=-1}){
-    return _grid[x][y];
+  int getCaseType({int x=-1, int y=-1}){
+    return _grid[x][y].type;
   }
 
   /// Renvoie un type Walls représentant si un mur est présent autour 
@@ -55,17 +55,16 @@ class GameViewModel extends ChangeNotifier {
   /// terrain 
   Walls getWalls({int x=-1, int y=-1}) {
     return (
-      y-1<0 || _grid[x][y-1] == 2 || _grid[x][y-1] == 3, // Top
-      x+1>=gridWidth || _grid[x][y] == 1 || _grid[x][y] == 3, // Right
-      y+1>=gridHeight || _grid[x][y] == 2 || _grid[x][y] == 3, // Bottom
-      x-1<0 || _grid[x-1][y] == 1 || _grid[x-1][y] == 3 // Left
+      y-1<0 || _grid[x][y-1].hasBottomWall, // Top
+      x+1>=gridWidth || _grid[x][y].hasRightWall, // Right
+      y+1>=gridHeight || _grid[x][y].hasBottomWall, // Bottom
+      x-1<0 || _grid[x-1][y].hasRightWall // Left
     );
   }
 
   /// Initialise le jeu 
   void loadGame() {
-    _gameRepository.initGrid();
-    _gameRepository.initRobot();
+    _gameRepository.initGame();
     _grid = _gameRepository.grid;
     _robots = _gameRepository.robots;
 
